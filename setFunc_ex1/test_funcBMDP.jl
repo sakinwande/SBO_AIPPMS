@@ -146,7 +146,7 @@ n_simps=10
         idx = idx + 1
 
         push!(gp_mcts_rewards, gp_mcts_reward)
-    end
+    #end
 
 
 	println("GP-MCTS-DPW average planning time: ", total_planning_time_gp_mcts/total_plans_gp_mcts)

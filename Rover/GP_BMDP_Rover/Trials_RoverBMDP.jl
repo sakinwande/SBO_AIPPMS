@@ -209,9 +209,18 @@ function raster_policy(pomdp, b)
 	end
 end
 
-function solver_test_RoverBMDP(pref::String; number_of_sample_types::Int=10, map_size::Tuple{Int, Int}=(10,10), seed::Int64=1234, num_graph_trials=50, total_budget = 100.0, use_ssh_dir=false, plot_results=true, run_raster=false)
+number_of_sample_types = 20
+map_size = (10,10)
+seed = 1234
+num_graph_trials = 1
+total_budget = 100.0
+use_ssh_dir = false
+plot_results = true
+run_raster = false
+function solver_test_RoverBMDP(
+	pref::String; number_of_sample_types::Int=10, 	map_size::Tuple{Int, Int}=(10,10), seed::Int64=1234, num_graph_trials=50, total_budget = 100.0, use_ssh_dir=false, plot_results=true, run_raster=false)
 
-	# k = with_lengthscale(SqExponentialKernel(), 1.0) + with_lengthscale(MaternKernel(), 1.0)# NOTE: check length scale
+	k = with_lengthscale(SqExponentialKernel(), 1.0) + with_lengthscale(MaternKernel(), 1.0)# NOTE: check length scale
 	k = with_lengthscale(SqExponentialKernel(), 1.0) # NOTE: check length scale
     m(x) = 0.0 # default to 0.5 in the middle of the sample spectrum
     X_query = [[i,j] for i = 1:10, j = 1:10]
@@ -235,7 +244,7 @@ function solver_test_RoverBMDP(pref::String; number_of_sample_types::Int=10, map
 
     i = 1
     idx = 1
-    while idx <= num_graph_trials
+    # while idx <= num_graph_trials
         @show i
         rng = MersenneTwister(seed+i)
 
@@ -248,6 +257,11 @@ function solver_test_RoverBMDP(pref::String; number_of_sample_types::Int=10, map
 
 		depth = 5
 		gp_bmdp_policy = get_gp_bmdp_policy(bmdp, rng, depth, 100)
+
+		boo = initialstate(bmdp).val
+		initialstate(bmdp.pomdp)
+
+		support(boo)
 
 		# GP-MCTS-DPW
 		gp_mcts_reward, state_hist, gp_hist, action_hist, reward_hist, total_reward_hist, planning_time, num_plans = run_rover_bmdp(rng, bmdp, gp_bmdp_policy, gp_bmdp_isterminal)
@@ -318,7 +332,7 @@ function solver_test_RoverBMDP(pref::String; number_of_sample_types::Int=10, map
 		println("Raster average planning time: ", total_planning_time_raster/total_plans_raster)
 		@show mean(raster_rewards)
 	end
-end
+
 
 
 solver_test_RoverBMDP("test", number_of_sample_types=10, total_budget = 100.0, use_ssh_dir=false, plot_results=true, run_raster=true)

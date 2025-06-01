@@ -47,3 +47,8 @@ function belief_reward(pomdp::setFuncPOMDP, b::setFuncBelief, a::Symbol, bp::set
 
     return r
 end
+
+function POMDPs.reward(pomdp::setFuncPOMDP, s::setFuncState, a::Symbol, sp::setFuncState)
+
+    return 0
+end

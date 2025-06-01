@@ -1,5 +1,5 @@
 include("GP.jl")
-include("example_pomdp.jl")
+include("setFunc_pomdp.jl")
 include("belief_mdp.jl")
 using Random
 using BasicPOMCP
@@ -58,6 +58,7 @@ function run_setFunc_bmdp(rng::RNG, bmdp::BeliefMDP, policy, n_iters=20) where {
 		new_belief_state, sim_reward = POMDPs.gen(bmdp, belief_state, a, rng)
 
 		# just use these to get the true reward NOT the simulated reward
+        #TODO: true map does not exist here...
 		s = setFuncState(belief_state.pos, bmdp.pomdp.true_map, belief_state.cost_expended, belief_state.drill_samples)
 		sp = setFuncState(new_belief_state.pos, bmdp.pomdp.true_map, new_belief_state.cost_expended, new_belief_state.drill_samples)
 		true_reward = reward(bmdp.pomdp, s, a, sp)
@@ -97,8 +98,6 @@ n_simps=10
     X_query = reshape(X_query, query_size[1]*1)
     KXqXq = K(X_query, X_query, k)
 
-    μ(X_query,m)
-
     LB_GP = GaussianProcess(m, μ(X_query, m), k, [], X_query, [], [], [], [], KXqXq);
     UB_GP = GaussianProcess(m, μ(X_query, m), k, [], X_query, [], [], [], [], KXqXq);
 
@@ -111,8 +110,6 @@ n_simps=10
 	total_planning_time_gp_mcts = 0
 	total_plans_gp_mcts = 0
 
-    
-    
     i = 1
     idx = 1
 
@@ -124,8 +121,9 @@ n_simps=10
         aind = Dict(Symbol(i) => i for i in 1:n_simps)
         POMDPs.actionindex(pomdp::setFuncPOMDP, a::Symbol) = aind[a]
 
-        pomdp = setFuncPOMDP(oracle, lb_func, ub_func, domain, n_simps, lb_prior, ub_prior, rng, (1,), (10, 1), 1e-9, 1, 1, -1, aind)
+        pomdp = setFuncPOMDP(oracle, lb_func, ub_func, domain, n_simps, lb_prior, ub_prior, rng, (1,), (10, 1),1, 1e-9, 1, 1, -1, aind)
 
+        
         bmdp = BeliefMDP(pomdp, setFuncBeliefUpdater(pomdp), belief_reward)
 
         gp_bmdp_isterminal(s) = POMDPs.isterminal(pomdp, s)
@@ -153,13 +151,3 @@ n_simps=10
 	@show mean(gp_mcts_rewards)
 #end
 
-
-boo = [1,2,3,4]
-
-symbols = Symbol.(string.(boo))
-
-println(symbols)
-
-typeof(symbols[1])
-
-typeof(:jk)

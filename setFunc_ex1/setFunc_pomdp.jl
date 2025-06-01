@@ -46,6 +46,7 @@ end
     map_size::Tuple{Int,Int}              = (num_simps,1) # size of the map
 
     #TODO: Revisit numbers below here
+    discount::Float64                      = 1.0
     σ_drill::Float64                       = 1e-9
     step_size::Int64                       = 1 # scales the step the agent takes at each iteration
     new_sample_reward::Float64             = 1 # reward for drilling a unique sample
@@ -69,6 +70,8 @@ end
 function POMDPs.isterminal(pomdp::setFuncPOMDP, b::setFuncBelief)
     return false
 end
+
+POMDPs.discount(pomdp::setFuncPOMDP) = pomdp.discount
 include("states.jl")
 include("actions.jl")
 include("observations.jl")

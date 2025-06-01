@@ -17,7 +17,7 @@ function convert_pos_coord_2_pos_idx(pomdp::setFuncPOMDP, pos::setFuncPos)
     #Return the index of the interval that contains the position
     Interval = pomdp.domain[2] - pomdp.domain[1]
     step_size = Interval / pomdp.num_simps
-    idx = findfirst(x -> x[1] <= pos < x[2], [pomdp.domain[1] + step_size * (i - 1), pomdp.domain[1] + step_size * i] for i in 1:pomdp.num_simps)
+    idx = findfirst(x -> x[1] <= pos[1] < x[2], [pomdp.domain[1] + step_size * (i - 1), pomdp.domain[1] + step_size * i] for i in 1:pomdp.num_simps)
 
     return idx
 end
